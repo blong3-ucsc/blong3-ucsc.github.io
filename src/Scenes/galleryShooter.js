@@ -2,7 +2,7 @@ class galleryShooter extends Phaser.Scene {
     constructor () {
         super("galleryScene");
 
-        this.my = {sprite: {} , text: {}}; 
+        this.my = {sprite: {} , text: {}};
         
     }
 
@@ -159,6 +159,7 @@ class galleryShooter extends Phaser.Scene {
         my.sprite.basicEnemy = my.sprite.basicEnemy.filter((basicEnemy) => basicEnemy.y > - (basicEnemy.displayHeight/2));
         my.sprite.specialEnemy = my.sprite.specialEnemy.filter((specialEnemy) => specialEnemy.y > - (specialEnemy.displayHeight/2))
         my.sprite.specialBullet = my.sprite.specialBullet.filter((bullet) => bullet.y > - (bullet.displayHeight/2));
+        my.sprite.specialEnemyBullet = my.sprite.specialEnemyBullet.filter((bullet) => bullet.y > - (bullet.displayHeight/2));
         
         // collision detection
         for (let bullet of my.sprite.bullet) {
@@ -190,7 +191,7 @@ class galleryShooter extends Phaser.Scene {
             }    
         }
 
-        for (let bullet of my.sprite.basicEnemyBullet) {
+        for (let bullet of my.sprite.basicEnemyBullet.concat(my.sprite.specialEnemyBullet)) {
             if (this.collides(my.sprite.player, bullet)) {
                 if (this.playerDamaged + this.iFrames < time) {
                     this.playerDamaged = time;
