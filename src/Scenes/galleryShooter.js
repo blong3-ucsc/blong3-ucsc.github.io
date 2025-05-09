@@ -44,6 +44,8 @@ class galleryShooter extends Phaser.Scene {
         my.sprite.player.setScale(1.5);
 
         my.text.score = this.add.bitmapText(580, 0, "rocketSquare", "Score " + this.myScore);
+
+        document.getElementById('description').innerHTML = "<h2>Gallery Shooter</h2><br>A: left // D: right // K: fire bullet// L: fire special bullet"
     }
 
     update(time, delta) {
