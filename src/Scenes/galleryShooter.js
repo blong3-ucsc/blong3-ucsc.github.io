@@ -2,7 +2,7 @@ class galleryShooter extends Phaser.Scene {
     constructor () {
         super("galleryScene");
 
-        this.my = {sprite: {} , text: {}};
+        this.my = {sprite: {} , text: {}}; 
         
     }
 
