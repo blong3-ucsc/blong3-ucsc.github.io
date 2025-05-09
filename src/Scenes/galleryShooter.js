@@ -3,26 +3,7 @@ class galleryShooter extends Phaser.Scene {
         super("galleryScene");
 
         this.my = {sprite: {} , text: {}};
-
-        this.playerSpeed = 2.5;     
-        this.bulletSpeed = 5;     
-        this.baseFireRate = 175;
-        this.specialFireRate = 750;
-        this.nextFireTime = 0;   
-        this.my.sprite.bullet = []; 
-        this.my.sprite.specialBullet = [];  
-        this.myScore = 0;
-        this.my.sprite.basicEnemy = [];
-        this.my.sprite.specialEnemy = [];
-        this.my.sprite.basicEnemyBullet = [];
-        this.counter = 0;
-        this.verticalSpacing = 60;     
-        this.nextEnemyY = 80;
-        this.enemyYFlag = true;
-        this.goingLeft = true;
-        this.basicEnemyMinFireRate = 1000;
-        this.basicEnemyMaxFireRate = 1500;
-        this.basicEnemyFireTime = 0;
+        
     }
 
     preload() {
@@ -35,15 +16,44 @@ class galleryShooter extends Phaser.Scene {
     create() {
         let my = this.my;
 
+        this.playerSpeed = 2.5;     
+        this.bulletSpeed = 5;     
+        this.baseFireRate = 175;
+        this.specialFireRate = 750;
+        this.nextFireTime = 0;   
+        this.my.sprite.bullet = []; 
+        this.my.sprite.specialBullet = [];  
+        this.myScore = 0;
+        this.my.sprite.basicEnemy = [];
+        this.my.sprite.specialEnemy = [];
+        this.my.sprite.basicEnemyBullet = [];
+        this.my.sprite.specialEnemyBullet = [];
+        this.counter = 0;
+        this.verticalSpacing = 60;     
+        this.nextEnemyY = 80;
+        this.enemyYFlag = true;
+        this.goingLeft = true;
+        this.basicEnemyMinFireRate = 1000;
+        this.basicEnemyMaxFireRate = 1500;
+        this.basicEnemyFireTime = 0;
+        this.lives = 3
+        this.specialEnemyFireRate = 750;
+        this.iFrames = 1000;
+        this.playerDamaged = -Infinity;
+        this.gameRunning = true;
+
+        // Controls 
         this.left = this.input.keyboard.addKey("A");
         this.right = this.input.keyboard.addKey("D");
         this.fire = this.input.keyboard.addKey("K");
         this.specialFire = this.input.keyboard.addKey("L");
+        this.restart = this.input.keyboard.addKey("R")
 
-        my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "airplanes", "ship3.png");
+        my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 60, "airplanes", "ship3.png");
         my.sprite.player.setScale(1.5);
 
-        my.text.score = this.add.bitmapText(580, 0, "rocketSquare", "Score " + this.myScore);
+        my.text.score = this.add.bitmapText(500, 0, "rocketSquare", "Score " + this.myScore);
+        my.text.lives = this.add.bitmapText(10, 560, "rocketSquare", "Lives: " + this.lives);
 
         document.getElementById('description').innerHTML = "<h2>Gallery Shooter</h2><br>A: left // D: right // K: fire bullet// L: fire special bullet"
     }
@@ -51,6 +61,7 @@ class galleryShooter extends Phaser.Scene {
     update(time, delta) {
         let my = this.my;
         this.counter++;
+        const enemiesCleared = this.my.sprite.basicEnemy.length == 0 && this.my.sprite.specialEnemy.length == 0;
 
         // Controls and bullet definition
         if (this.left.isDown) {
@@ -83,6 +94,16 @@ class galleryShooter extends Phaser.Scene {
             }
         }
 
+        if (this.gameRunning == false && Phaser.Input.Keyboard.JustDown(this.restart)) {
+            this.scene.restart();
+        }
+
+        if (this.gameRunning == true && this.counter >= 700 && enemiesCleared) {
+            this.gameRunning = false;
+            my.text.victoryText = this.add.bitmapText(400, 300, "rocketSquare", "You Win!")
+            my.text.restartButton = this.add.bitmapText(350, 350, "rocketSquare", "Press R to restart")
+        }
+
         for (let bullet of my.sprite.bullet) {
             bullet.y -= this.bulletSpeed;
         }
@@ -91,8 +112,15 @@ class galleryShooter extends Phaser.Scene {
             specialBullet.y -= this.bulletSpeed;
         }
 
+        if (this.gameRunning == true && this.lives <= 0) {
+            this.gameRunning = false;
+            my.sprite.player.y = -100
+            my.text.gameOver = this.add.bitmapText(400, 300, "rocketSquare", "Game Over");
+            my.text.restartButton = this.add.bitmapText(350, 350, "rocketSquare", "Press R to restart")
+        }
+
         // Wave 1 
-        for (let spawn = 500; spawn <= 900; spawn += 100) {
+        for (let spawn = 500; spawn <= 1100; spawn += 50) {
             if (this.counter == spawn) {
                 const enemy = this.add.sprite(game.config.width / 2, this.nextEnemyY, "spaceShooters", "playerShip1_orange.png");
                 enemy.setScale(0.50);
@@ -114,12 +142,23 @@ class galleryShooter extends Phaser.Scene {
                 }
             }
         }
+
+        if (this.counter == 800) {
+            const enemy = this.add.sprite(game.config.width / 2, this.nextEnemyY, "spaceShooters", "ufoBlue.png"); 
+            enemy.flipY = true;
+            enemy.scorePoints = 500;
+            my.sprite.specialEnemy.push(enemy);
+            enemy.nextShotAt = time + this.specialEnemyFireRate
+            this.nextEnemyY = 40
+            enemy.goingLeft = true;
+            
+        }
         
         // cull bullets and enemies when destroyed
         my.sprite.bullet = my.sprite.bullet.filter((bullet) => bullet.y > - (bullet.displayHeight/2));
         my.sprite.basicEnemy = my.sprite.basicEnemy.filter((basicEnemy) => basicEnemy.y > - (basicEnemy.displayHeight/2));
         my.sprite.specialEnemy = my.sprite.specialEnemy.filter((specialEnemy) => specialEnemy.y > - (specialEnemy.displayHeight/2))
-        my.sprite.specialbullet = my.sprite.specialBullet.filter((bullet) => bullet.y > - (bullet.displayHeight/2));
+        my.sprite.specialBullet = my.sprite.specialBullet.filter((bullet) => bullet.y > - (bullet.displayHeight/2));
         
         // collision detection
         for (let bullet of my.sprite.bullet) {
@@ -135,10 +174,6 @@ class galleryShooter extends Phaser.Scene {
             for (let enemy of my.sprite.specialEnemy) {
                 if (this.collides(enemy, bullet)) {
                     bullet.y = -100;
-                    enemy.visible = false;
-                    enemy.y = -100;
-                    this.myScore += enemy.scorePoints;
-                    this.updateScore();
                 }
             }
         }
@@ -153,6 +188,17 @@ class galleryShooter extends Phaser.Scene {
                     this.updateScore();
                 }
             }    
+        }
+
+        for (let bullet of my.sprite.basicEnemyBullet) {
+            if (this.collides(my.sprite.player, bullet)) {
+                if (this.playerDamaged + this.iFrames < time) {
+                    this.playerDamaged = time;
+                    this.lives -= 1;
+                    bullet.y = -100;
+                    this.updateLives();
+                } 
+            }
         }
 
         // basic enemy definitions
@@ -174,9 +220,30 @@ class galleryShooter extends Phaser.Scene {
             }
         }
 
-        for (let bullet of my.sprite.basicEnemyBullet) {
-            bullet.y += this.bulletSpeed * 0.5;
+        //special enemy definitions
+        for (let enemy of my.sprite.specialEnemy) {
+            if (enemy.goingLeft) {
+                enemy.x -= 0.6;
+                if (enemy.x <= (my.sprite.player.displayWidth/2 + 40)) {
+                    enemy.goingLeft = false;
+                }
+            } else {
+                enemy.x += 0.6;
+                if (enemy.x >= (game.config.width - (my.sprite.player.displayWidth/2 + 40))) {
+                    enemy.goingLeft = true;
+                }
+            }
+            if (time > (enemy.nextShotAt || 0)) {
+                my.sprite.specialEnemyBullet.push(this.add.sprite(enemy.x,enemy.y + enemy.displayHeight / 2,"spaceShooters", "laserRed01.png"));
+                enemy.nextShotAt = time + this.specialEnemyFireRate;
+            }
         }
+            for (let bullet of my.sprite.basicEnemyBullet) {
+                bullet.y += this.bulletSpeed * 0.5;
+            }
+            for (let bullet of my.sprite.specialEnemyBullet) {
+                bullet.y += this.bulletSpeed * 0.75
+            }
     }
 
     collides(a, b) {
@@ -188,5 +255,10 @@ class galleryShooter extends Phaser.Scene {
     updateScore() {
         let my = this.my;
         my.text.score.setText("Score " + this.myScore);
+    }
+
+    updateLives() {
+        let my = this.my;
+        my.text.lives.setText("Lives: " + this.lives);
     }
 }
