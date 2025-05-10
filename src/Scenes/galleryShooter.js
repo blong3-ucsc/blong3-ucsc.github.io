@@ -3,7 +3,6 @@ class galleryShooter extends Phaser.Scene {
         super("galleryScene");
 
         this.my = {sprite: {} , text: {}};
-        
     }
 
     preload() {
@@ -48,6 +47,7 @@ class galleryShooter extends Phaser.Scene {
         this.fire = this.input.keyboard.addKey("K");
         this.specialFire = this.input.keyboard.addKey("L");
         this.restart = this.input.keyboard.addKey("R")
+        this.menu = this.input.keyboard.addKey("M")
 
         my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 60, "airplanes", "ship3.png");
         my.sprite.player.setScale(1.5);
@@ -98,10 +98,15 @@ class galleryShooter extends Phaser.Scene {
             this.scene.restart();
         }
 
+        if (this.gameRunning == false && Phaser.Input.Keyboard.JustDown(this.menu)) {
+            this.scene.start("menuScene");
+        }
+
         if (this.gameRunning == true && this.counter >= 700 && enemiesCleared) {
             this.gameRunning = false;
             my.text.victoryText = this.add.bitmapText(400, 300, "rocketSquare", "You Win!")
             my.text.restartButton = this.add.bitmapText(350, 350, "rocketSquare", "Press R to restart")
+            my.text.menuButton = this.add.bitmapText(350, 400, "rocketSquare", "Press M for menu")
         }
 
         for (let bullet of my.sprite.bullet) {
@@ -117,10 +122,11 @@ class galleryShooter extends Phaser.Scene {
             my.sprite.player.y = -100
             my.text.gameOver = this.add.bitmapText(400, 300, "rocketSquare", "Game Over");
             my.text.restartButton = this.add.bitmapText(350, 350, "rocketSquare", "Press R to restart")
+            my.text.menuButton = this.add.bitmapText(350, 350, "rocketSquare", "Press M for menu")
         }
 
         // Wave 1 
-        for (let spawn = 500; spawn <= 1100; spawn += 50) {
+        for (let spawn = 500; spawn <= 1200; spawn += 50) {
             if (this.counter == spawn) {
                 const enemy = this.add.sprite(game.config.width / 2, this.nextEnemyY, "spaceShooters", "playerShip1_orange.png");
                 enemy.setScale(0.50);
