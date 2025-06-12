@@ -10,14 +10,15 @@ class Load extends Phaser.Scene {
         this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
 
         // Load tilemap information
-        this.load.image("tilemap_tiles", "monochrome_tilemap.png");                         // Packed tilemap
-        this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");   // Tilemap in JSON
+        this.load.image("tilemap_tiles", "tilemap_packed.png");                         // Packed tilemap
+        this.load.tilemapTiledJSON("Title", "Title.tmj");   // Tilemap in JSON
+        this.load.tilemapTiledJSON("Design", "Design.tmj");   // Tilemap in JSON
+        this.load.tilemapTiledJSON("Design2", "Design2.tmj");   // Tilemap in JSON
 
         // Load the tilemap as a spritesheet
-        this.load.spritesheet("tilemap_sheet", "monochrome_tilemap.png", {
-            frameWidth: 16,
-            frameHeight: 16,
-            spacing: 1,
+        this.load.spritesheet("tilemap_sheet", "tilemap_packed.png", {
+            frameWidth: 18,
+            frameHeight: 18
         });
 
         // Oooh, fancy. A multi atlas is a texture atlas which has the textures spread
@@ -27,11 +28,6 @@ class Load extends Phaser.Scene {
         // The multiatlas was created using TexturePacker and the Kenny
         // Particle Pack asset pack.
         this.load.multiatlas("kenny-particles", "kenny-particles.json");
-
-        // audio
-        this.load.audio("sfx_jump", "jump.wav");
-        this.load.audio("sfx_pickup_a", "pickup_a.wav");
-        this.load.audio("sfx_pickup_b", "pickup_b.wav");
     }
 
     create() {
@@ -66,7 +62,7 @@ class Load extends Phaser.Scene {
         });
 
          // ...and pass to the next Scene
-         this.scene.start("platformerScene");
+         this.scene.start("titleScene");
     }
 
     // Never get here since a new scene is started in create()

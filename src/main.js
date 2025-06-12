@@ -29,11 +29,12 @@ let config = {
             }
         }
     },
-    width: 1600,
+    width: 1440,
     height: 900,
-    scene: [Load, Platformer]
+    scene: [Load, Platformer, Title, Credits, Level2, WinScreen]
 }
 
+var cursors;
 const SCALE = 2.0;
 var my = {sprite: {}, text: {}, vfx: {}};
 

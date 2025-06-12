@@ -1,6 +1,6 @@
-class Credits extends Phaser.Scene {
+class Title extends Phaser.Scene {
     constructor() {
-        super("credits");
+        super("titleScene");
     }
 
     preload(){
@@ -10,22 +10,23 @@ class Credits extends Phaser.Scene {
         this.map = this.add.tilemap("Title", 18, 18, 30, 20); // Load title map
 
         this.startGame = this.input.keyboard.addKey("R"); // Start game
+        this.credits = this.input.keyboard.addKey("H"); // Credits
 
-        this.add.text(180, 250, "Game by: Bryan Long and Darren Fang", { // Add title
+        this.add.text(180, 250, "Outta Here!", { // Add title
             fontFamily: '"Lucida Console", "Courier New", monospace',
-            fontSize: 40,
+            fontSize: 50,
             wordWrap: {
                 width: 0
             }
         });
-        this.add.text(180, 300, "Sounds and assests: Kenney", { // Add text to start game
+        this.add.text(200, 350, "Press R to start the game!", { // Add text to start game
             fontFamily: '"Lucida Console", "Courier New", monospace',
-            fontSize: 40,
+            fontSize: 30,
             wordWrap: {
                 width: 0
             }
         });
-        this.add.text(200, 375, "Press R to start game", { // Add text to view credits
+        this.add.text(200, 400, "Press H for credits", { // Add text to view credits
             fontFamily: '"Lucida Console", "Courier New", monospace',
             fontSize: 30,
             wordWrap: {
@@ -43,8 +44,12 @@ class Credits extends Phaser.Scene {
     }
     update() {
         if (Phaser.Input.Keyboard.JustDown(this.startGame)) { // Start first level
-            this.scene.stop("credits");
+            this.scene.stop("Title");
             this.scene.start("platformerScene");
+        }
+        else if (Phaser.Input.Keyboard.JustDown(this.credits)){ // Start credits scene
+            this.scene.stop("Title");
+            this.scene.start("credits");
         }
     }
 }
